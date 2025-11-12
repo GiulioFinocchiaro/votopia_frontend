@@ -9,13 +9,13 @@ class ListProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _token;
   late final List<ListSchool> _listsMine;
-  late final List<ListSchol> _listsMyOrganization;
+  late final List<ListSchool> _listsMyOrganization;
 
   Future<Map<String, dynamic>> getListsSchoolMine() async{
     _isLoading = true;
     notifyListeners();
 
-    SharedPreferences sh = SharedPreferences.getInstance();
+    SharedPreferences sh = await SharedPreferences.getInstance();
     _token = sh.getString("token");
 
     try {
@@ -27,7 +27,7 @@ class ListProvider extends ChangeNotifier {
       final int responseCode = response['responseCode'];
 
       if (responseCode >= 200 && responseCode <300){
-        _listMine = (response['data'] as List)?
+        _listsMine = (response['data'] as List)
             .map((list) => ListSchool.fromJson(list))
             .toList();
         return {
@@ -45,7 +45,7 @@ class ListProvider extends ChangeNotifier {
       print("Si è verifcato un'errore nell'ottenere le tue liste $e");
       return {
         "status": false,
-        "message": response['message'],
+        "message": e,
         "statusCode": 500
       };
     } finally {
@@ -58,7 +58,7 @@ class ListProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    SharedPreferences sh = SharedPreferences.getInstance();
+    SharedPreferences sh = await SharedPreferences.getInstance();
     _token = sh.getString("token");
 
     try {
@@ -70,7 +70,7 @@ class ListProvider extends ChangeNotifier {
       final int responseCode = response['statusCode'];
 
       if (responseCode >= 200 && responseCode < 300){
-        _listsMyOrganization = (response['data'] as List)?
+        _listsMyOrganization = (response['data'] as List)
             .map((list) => ListSchool.fromJson(list))
             .toList();
 
@@ -86,10 +86,10 @@ class ListProvider extends ChangeNotifier {
         "statusCode": responseCode
       };
     } catch (e){
-      print("Si è verificato un'errore nell'ottenere tutte le liste "+e);
+      print("Si è verificato un'errore nell'ottenere tutte le liste ${e}");
       return {
         "status": false,
-        "message": response['message'],
+        "message": e,
         "statusCode": 500
       };
     } finally {

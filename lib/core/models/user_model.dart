@@ -1,41 +1,57 @@
+import 'package:votopia/core/models/list_school_model.dart';
+import 'package:votopia/core/models/role_model.dart';
+
 import 'organization_model.dart';
 
 class User {
-  final int _id;
-  final String _email;
-  final Organization _organization;
-  final DateTime? _created_at;
+  final int id;
+  final String email;
+  final String name;
+  final Organization organization;
+  final List<Role> roles;
+  final List<ListSchool> lists;
+  final DateTime? createdAt;
 
-  User({
-    required int id,
-    required String email,
-    required Organization organization,
-    DateTime? created_at
-  }) :
-      _id = id,
-      _email = email,
-      _organization = organization,
-      _created_at = created_at;
-  
-  factory User.fromJson(Map<String, dynamic> json){
+  const User({
+    required this.id,
+    required this.email,
+    required this.name,
+    required this.organization,
+    required this.roles,
+    required this.lists,
+    this.createdAt,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    print("this");
     return User(
       id: json['id'] is int
           ? json['id']
-          : int.tryParse(json['id'].toString())
-          ?? 0,
+          : int.tryParse(json['id'].toString()) ?? 0,
       email: json['email'] ?? '',
+      name: json['name'] ?? '',
       organization: json['organization'] != null
           ? Organization.fromJson(json['organization'])
           : Organization.empty(),
-      created_at: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
+      roles: (json['roles'] as List<dynamic>?)
+              ?.map((r) => Role.fromJson(r))
+              .toList() ??
+          [],
+      lists: (json['lists'] as List<dynamic>?)
+              ?.map((m) => ListSchool.fromJson(m))
+              .toList() ??
+          [],
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'])
+          : null,
     );
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is User && runtimeType == other.runtimeType && _id == other._id;
+      other is User && runtimeType == other.runtimeType && id == other.id;
 
   @override
-  int get hashCode => _id.hashCode;
+  int get hashCode => id.hashCode;
 }

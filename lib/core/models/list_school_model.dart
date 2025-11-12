@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:votopia/core/models/organization_model.dart';
 import 'package:votopia/core/utils/utils.dart';
 
@@ -42,15 +44,29 @@ class ListSchool {
         name: json['name'] ?? '',
         description: json['description'] ?? '',
         slogan: json['slogan'] ?? null,
-        color_primary: Utils().colorFromHex(json['color_primary']) ?? null,
-        color_secondary: Utils().colorFromHex(json['color_secondary']) ?? null,
+        color_primary: Utils.colorFromHex(json['color_primary']) ?? null,
+        color_secondary: Utils.colorFromHex(json['color_secondary']) ?? null,
         logo_url: json['logo_url'] ?? null,
         organization: Organization.fromJson(json['organization'] ?? Organization.empty()),
         created_at: json['created_at'] ?? null
     );
   }
 
-  DateTime get created_at => _created_at;
+  factory ListSchool.empty(){
+    return ListSchool(
+      id: 0,
+      name: '',
+      description: '',
+      slogan: null,
+      color_primary: null,
+      color_secondary: null,
+      logo_url: null,
+      organization: Organization.empty(),
+      created_at: null
+    );
+  }
+
+  DateTime? get created_at => _created_at;
 
   Organization get organization => _organization;
 
@@ -61,7 +77,7 @@ class ListSchool {
   int get id => _id;
 
 
-  String get slogan => _slogan;
+  String? get slogan => _slogan;
 
 
   @override
@@ -78,9 +94,9 @@ class ListSchool {
   @override
   int get hashCode => _id.hashCode;
 
-  Color get color_primary => _color_primary;
+  Color? get color_primary => _color_primary;
 
-  Color get color_secondary => _color_secondary;
+  Color? get color_secondary => _color_secondary;
 
-  String get logo_url => _logo_url;
+  String? get logo_url => _logo_url;
 }

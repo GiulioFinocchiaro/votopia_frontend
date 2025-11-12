@@ -35,17 +35,35 @@ class Organization {
         _created_at = null;
 
   factory Organization.fromJson(Map<String, dynamic> json) {
+    final planData = json['plan'];
+    Plan parsedPlan;
+
+    if (planData is Plan) {
+      parsedPlan = planData;
+    } else if (planData is Map<String, dynamic>) {
+      parsedPlan = Plan.fromJson(planData);
+    } else {
+      parsedPlan = Plan.empty();
+    }
+
+    print('Organization.fromJson: planData type -> ${planData.runtimeType}');
+
     return Organization(
-      id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
-      code: json['code'] ?? '',
-      name: json['name'] ?? '',
-      plan: json['plan'] != null ? Plan.fromJson(json['plan']) : Plan.empty(),
-      status: json['status'] == true || json['status'] == 1 || json['status'] == 'active',
+      id: json['id'] is int
+          ? json['id']
+          : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      code: json['code']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      plan: parsedPlan,
+      status: json['status'] == true ||
+          json['status'] == 1 ||
+          json['status'] == 'active',
       max_lists: json['max_lists'] is int
           ? json['max_lists']
-          : int.tryParse(json['max_lists'].toString())
-          ?? 0,
-      created_at: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
+          : int.tryParse(json['max_lists']?.toString() ?? '') ?? 0,
+      created_at: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString())
+          : null,
     );
   }
 

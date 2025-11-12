@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:votopia/core/ui/styles/app_colors.dart';
-import 'package:votopia/core/ui/styles/app_text_styles.dart';
+import 'package:votopia/core/ui/widgets/app_sidebar.dart';
+import 'package:votopia/core/ui/widgets/app_top_bar.dart';
+import 'package:votopia/core/views/users_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String organizationName;
@@ -13,236 +16,48 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
-  final List<String> _menuItems = [
-    "Dashboard",
-    "Membri",
-    "Eventi",
-    "Comunicazione",
-    "Statistiche",
-    "Impostazioni",
-  ];
+  void _onMenuItemTap(int index) {
+    if (index == 1) {
+      // Naviga a Utenti
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UsersScreen(
+            organizationName: widget.organizationName,
+          ),
+        ),
+      );
+    } else {
+      setState(() => _selectedIndex = index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F9),
+      backgroundColor: const Color(0xFFEFEFEF),
       body: Row(
         children: [
-          // SIDEBAR
-          Container(
-            width: 240,
-            color: AppColors.primary,
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Column(
-              children: [
-                Image.asset('assets/images/icon.png', height: 60),
-                const SizedBox(height: 12),
-                Text(
-                  widget.organizationName,
-                  style: AppTextStyles.heading.copyWith(color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _menuItems.length,
-                    itemBuilder: (context, index) {
-                      final selected = index == _selectedIndex;
-                      final icons = [
-                        Icons.dashboard_outlined,
-                        Icons.people_alt_outlined,
-                        Icons.event_outlined,
-                        Icons.campaign_outlined,
-                        Icons.bar_chart_outlined,
-                        Icons.settings_outlined
-                      ];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: InkWell(
-                          onTap: () => setState(() => _selectedIndex = index),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: selected ? Colors.white.withOpacity(0.15) : Colors.transparent,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(icons[index], color: Colors.white),
-                                const SizedBox(width: 10),
-                                Text(
-                                  _menuItems[index],
-                                  style: AppTextStyles.body.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const Divider(color: Colors.white24),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const CircleAvatar(radius: 18, backgroundImage: AssetImage('assets/images/user.png')),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        "Amministratore",
-                        style: AppTextStyles.body.copyWith(color: Colors.white70, fontSize: 13),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
+          AppSidebar(
+            organizationName: widget.organizationName,
+            selectedIndex: _selectedIndex,
+            onMenuItemTap: _onMenuItemTap,
           ),
-
-          // MAIN CONTENT
           Expanded(
             child: Column(
               children: [
-                // TOPBAR
-                Container(
-                  height: 70,
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            _menuItems[_selectedIndex],
-                            style: AppTextStyles.heading.copyWith(fontSize: 22, color: Colors.black87),
-                          ),
-                          const SizedBox(width: 20),
-                          Container(
-                            width: 220,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF2F3F5),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const TextField(
-                              decoration: InputDecoration(
-                                hintText: "Cerca...",
-                                prefixIcon: Icon(Icons.search, size: 20),
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.notifications_outlined),
-                            onPressed: () {},
-                          ),
-                          const SizedBox(width: 10),
-                          const CircleAvatar(
-                            radius: 18,
-                            backgroundImage: AssetImage('assets/images/user.png'),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-
-                // BODY
+                const AppTopBar(title: 'Dashboard'),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Statistiche generali
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildStatCard("Membri attivi", "42", Icons.people, Colors.blueAccent),
-                            _buildStatCard("Eventi programmati", "5", Icons.event, Colors.orangeAccent),
-                            _buildStatCard("Moduli attivi", "8", Icons.extension, Colors.green),
-                            _buildStatCard("Piano", "Premium", Icons.workspace_premium, Colors.purple),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-
-                        // Moduli attivi
-                        Text("Moduli attivi", style: AppTextStyles.heading.copyWith(fontSize: 20)),
-                        const SizedBox(height: 16),
-                        Wrap(
-                          spacing: 16,
-                          runSpacing: 16,
-                          children: [
-                            _moduleTile(Icons.people_alt, "Gestione Membri"),
-                            _moduleTile(Icons.event_available, "Eventi e Tornei"),
-                            _moduleTile(Icons.campaign, "Comunicazione e Social"),
-                            _moduleTile(Icons.bar_chart, "Statistiche e Sondaggi"),
-                            _moduleTile(Icons.shopping_bag, "Merch di Istituto"),
-                            _moduleTile(Icons.discount, "Carte Sconto"),
-                            _moduleTile(Icons.brush, "Moodboard AI"),
-                            _moduleTile(Icons.psychology_alt, "AI Speech Trainer"),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-
-                        // Grafico + Attività
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                height: 300,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: const Center(
-                                  child: Text(
-                                    "📈 Grafico popolarità e interazioni (fl_chart qui)",
-                                    style: TextStyle(color: Colors.black54),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 24),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                height: 300,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Attività recenti", style: AppTextStyles.heading.copyWith(fontSize: 18)),
-                                    const SizedBox(height: 12),
-                                    _activity("Nuovo evento: Assemblea di Istituto", "3h fa"),
-                                    _activity("Utente aggiunto: Sara P.", "7h fa"),
-                                    _activity("AI Graphic generata: Post Instagram", "1g fa"),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _buildStatsCards(),
+                        const SizedBox(height: 32),
+                        _buildModulesSection(),
+                        const SizedBox(height: 32),
+                        _buildActivitySection(),
                       ],
                     ),
                   ),
@@ -255,59 +70,473 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+  Widget _buildStatsCards() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            '42',
+            'Membri attivi',
+            LucideIcons.users,
+            Colors.white,
+            AppColors.primary,
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(width: 20),
+        Expanded(
+          child: _buildStatCard(
+            '5',
+            'Eventi programmati',
+            LucideIcons.calendar,
+            AppColors.secondary,
+            const Color(0xFF285300),
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: _buildStatCard(
+            '8',
+            'Moduli attivi',
+            LucideIcons.package,
+            Colors.white,
+            AppColors.primary,
+          ),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: _buildStatCard(
+            'Premium',
+            'Piano attivo',
+            LucideIcons.crown,
+            const Color(0xFFFFD700),
+            const Color(0xFF8B6914),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(String value, String label, IconData icon, Color bgColor, Color textColor) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: bgColor == Colors.white
+                            ? Colors.grey.shade600
+                            : textColor.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 42,
+                        fontWeight: FontWeight.w700,
+                        color: textColor,
+                        height: 1,
+                        letterSpacing: -1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: bgColor == Colors.white
+                      ? Colors.grey.shade100
+                      : Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Icon(
+                  icon,
+                  size: 28,
+                  color: bgColor == Colors.white
+                      ? Colors.grey.shade600
+                      : textColor,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModulesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 12),
-            Text(value, style: AppTextStyles.heading.copyWith(fontSize: 26)),
-            const SizedBox(height: 4),
-            Text(title, style: AppTextStyles.body.copyWith(color: Colors.black54)),
+            const Text(
+              'Moduli attivi',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(LucideIcons.plus, size: 18),
+              label: const Text('Aggiungi modulo'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+              ),
+            ),
           ],
         ),
-      ),
+        const SizedBox(height: 20),
+        GridView.count(
+          crossAxisCount: 4,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          childAspectRatio: 1.5,
+          children: [
+            _buildModuleCard(
+              'Gestione Membri',
+              LucideIcons.users,
+              AppColors.primary,
+            ),
+            _buildModuleCard(
+              'Eventi e Tornei',
+              LucideIcons.calendar,
+              const Color(0xFFFF6B6B),
+            ),
+            _buildModuleCard(
+              'Comunicazione',
+              LucideIcons.messageSquare,
+              const Color(0xFF4ECDC4),
+            ),
+            _buildModuleCard(
+              'Statistiche',
+              LucideIcons.chartBar,
+              AppColors.secondary,
+            ),
+            _buildModuleCard(
+              'Merch Store',
+              LucideIcons.shoppingBag,
+              const Color(0xFF9B59B6),
+            ),
+            _buildModuleCard(
+              'Carte Sconto',
+              LucideIcons.creditCard,
+              const Color(0xFFE67E22),
+            ),
+            _buildModuleCard(
+              'Moodboard AI',
+              LucideIcons.palette,
+              const Color(0xFFF39C12),
+            ),
+            _buildModuleCard(
+              'AI Speech Trainer',
+              LucideIcons.mic,
+              const Color(0xFF3498DB),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  Widget _moduleTile(IconData icon, String label) {
+  Widget _buildModuleCard(String title, IconData icon, Color color) {
     return Container(
-      width: 220,
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.primary),
-          const SizedBox(width: 10),
-          Expanded(child: Text(label, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w500))),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
         ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 28),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _activity(String title, String time) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(child: Text(title, style: AppTextStyles.body)),
-          Text(time, style: AppTextStyles.body.copyWith(color: Colors.grey, fontSize: 12)),
-        ],
-      ),
+  Widget _buildActivitySection() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Panoramica attività',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Ultimi 7 giorni',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: 250,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          LucideIcons.trendingUp,
+                          size: 48,
+                          color: Colors.grey.shade400,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Grafico attività',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Dati di esempio - Integrare con fl_chart',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 24),
+        Expanded(
+          flex: 1,
+          child: Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Attività recenti',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildActivityItem(
+                  'Nuovo evento creato',
+                  'Assemblea di Istituto',
+                  '3h fa',
+                  LucideIcons.calendar,
+                  const Color(0xFF4ECDC4),
+                ),
+                const SizedBox(height: 16),
+                _buildActivityItem(
+                  'Utente aggiunto',
+                  'Sara Pellegrino',
+                  '7h fa',
+                  LucideIcons.userPlus,
+                  AppColors.secondary,
+                ),
+                const SizedBox(height: 16),
+                _buildActivityItem(
+                  'Post pubblicato',
+                  'Nuova grafica Instagram',
+                  '1g fa',
+                  LucideIcons.image,
+                  const Color(0xFFE67E22),
+                ),
+                const SizedBox(height: 16),
+                _buildActivityItem(
+                  'Sondaggio creato',
+                  'Preferenze eventi',
+                  '2g fa',
+                  LucideIcons.chartBar,
+                  AppColors.primary,
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: BorderSide(color: AppColors.primary),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text('Vedi tutte'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActivityItem(
+      String title,
+      String subtitle,
+      String time,
+      IconData icon,
+      Color color,
+      ) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Text(
+          time,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade500,
+          ),
+        ),
+      ],
     );
   }
 }

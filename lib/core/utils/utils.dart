@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Utils {
-  Color? static colorFromHex(String? hexColor) {
+  static Color? colorFromHex(String? hexColor) {
     if (hexColor == null || hexColor.isEmpty) return null;
 
     String colorString = hexColor.toUpperCase().replaceAll("#", "");
