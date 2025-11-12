@@ -8,9 +8,9 @@ class Module {
     required String name,
     required String description
   }) :
-      _id = id,
-      _name = name,
-      _description = description;
+        _id = id,
+        _name = name,
+        _description = description;
 
   factory Module.fromJson(Map<String, dynamic> json){
     return Module(
@@ -22,6 +22,19 @@ class Module {
         description: json['description'] ?? ''
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'name': _name,
+      'description': _description,
+    };
+  }
+
+  // Getters
+  int get id => _id;
+  String get name => _name;
+  String get description => _description;
 
   @override
   bool operator ==(Object other) =>

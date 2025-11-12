@@ -31,8 +31,8 @@ class User {
       email: json['email'] ?? '',
       name: json['name'] ?? '',
       organization: json['organization'] != null
-          ? Organization.fromJson(json['organization'])
-          : Organization.empty(),
+        ? Organization.fromJson(json['organization'])
+        : Organization.empty(),
       roles: (json['roles'] as List<dynamic>?)
               ?.map((r) => Role.fromJson(r))
               .toList() ??

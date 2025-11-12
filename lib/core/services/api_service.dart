@@ -49,7 +49,7 @@ class ApiService {
             ),
       );
       return _handleResponse(response);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return _handleDioError(e);
     } catch (e) {
       return {
@@ -78,7 +78,7 @@ class ApiService {
         ),
       );
       return _handleResponse(response);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return _handleDioError(e);
     } catch (e) {
       return {
@@ -106,7 +106,7 @@ class ApiService {
         ),
       );
       return _handleResponse(response);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return _handleDioError(e);
     } catch (e) {
       return {
@@ -132,7 +132,7 @@ class ApiService {
         ),
       );
       return _handleResponse(response);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return _handleDioError(e);
     } catch (e) {
       return {
@@ -146,21 +146,47 @@ class ApiService {
   // --- Helper functions ---
   Map<String, dynamic> _handleResponse(Response response) {
     dynamic responseData;
-    if (response.data is Map<String, dynamic> || response.data is List) {
-      responseData = response.data;
+    if (response.data is Map<String, dynamic>) {
+      responseData = Map<String, dynamic>.from(response.data);
+      responseData['statusCode'] = response.statusCode;
+      return responseData;
+    } else if (response.data is List) {
+      return {
+        'statusCode': response.statusCode,
+        'data': response.data,
+        'message': 'Success',
+      };
     } else if (response.data is String) {
       try {
-        responseData = json.decode(response.data);
+        final decoded = json.decode(response.data);
+        if (decoded is Map<String, dynamic>) {
+          responseData = Map<String, dynamic>.from(decoded);
+          responseData['statusCode'] = response.statusCode;
+          return responseData;
+        } else {
+          return {
+            'statusCode': response.statusCode,
+            'data': decoded,
+            'message': 'Success',
+          };
+        }
       } catch (_) {
-        responseData = response.data;
+        return {
+          'statusCode': response.statusCode,
+          'data': response.data,
+          'message': 'Success',
+        };
       }
     }
 
-    responseData['statusCode'] = response.statusCode;
-    return responseData;
+    return {
+      'statusCode': response.statusCode,
+      'data': response.data,
+      'message': 'Success',
+    };
   }
 
-  Map<String, dynamic> _handleDioError(DioError e) {
+  Map<String, dynamic> _handleDioError(DioException e) {
     final statusCode = e.response?.statusCode ?? 0;
     final data = e.response?.data;
 

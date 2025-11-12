@@ -35,38 +35,33 @@ class Organization {
         _created_at = null;
 
   factory Organization.fromJson(Map<String, dynamic> json) {
-    final planData = json['plan'];
-    Plan parsedPlan;
-
-    if (planData is Plan) {
-      parsedPlan = planData;
-    } else if (planData is Map<String, dynamic>) {
-      parsedPlan = Plan.fromJson(planData);
-    } else {
-      parsedPlan = Plan.empty();
-    }
-
-    print('Organization.fromJson: planData type -> ${planData.runtimeType}');
-
     return Organization(
-      id: json['id'] is int
-          ? json['id']
-          : int.tryParse(json['id']?.toString() ?? '') ?? 0,
-      code: json['code']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
-      plan: parsedPlan,
-      status: json['status'] == true ||
-          json['status'] == 1 ||
-          json['status'] == 'active',
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
+      code: json['code'] ?? '',
+      name: json['name'] ?? '',
+      plan: json['plan'] != null ? Plan.fromJson(json['plan']) : Plan.empty(),
+      status: json['status'] == true || json['status'] == 1 || json['status'] == 'active',
       max_lists: json['max_lists'] is int
           ? json['max_lists']
-          : int.tryParse(json['max_lists']?.toString() ?? '') ?? 0,
-      created_at: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'].toString())
-          : null,
+          : int.tryParse(json['max_lists'].toString())
+          ?? 0,
+      created_at: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'code': _code,
+      'name': _name,
+      'plan': _plan.toJson(),
+      'status': _status,
+      'max_lists': _max_lists,
+      'created_at': _created_at?.toIso8601String(),
+    };
+  }
+
+  // Getters
   DateTime? get created_at => _created_at;
   bool get status => _status;
   Plan get plan => _plan;
@@ -78,7 +73,7 @@ class Organization {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Organization && runtimeType == other.runtimeType && _id == other._id;
+          other is Organization && runtimeType == other.runtimeType && _id == other._id;
 
   @override
   int get hashCode => _id.hashCode;
