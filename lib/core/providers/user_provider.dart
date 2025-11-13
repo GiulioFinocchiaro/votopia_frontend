@@ -24,7 +24,7 @@ class UserProvider extends ChangeNotifier{
         token: _token
       );
 
-      final int responseCode = response['responseCode'];
+      final int responseCode = response['statusCode'];
 
       if (responseCode >= 200 && responseCode <300){
         _usersMyOrganization = (response['data'] as List)

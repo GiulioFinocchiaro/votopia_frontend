@@ -29,13 +29,14 @@ class Plan {
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     return Plan(
-      id: json['id'] is int
-          ? json['id']
-          : int.tryParse(json['id'].toString()) ?? 0,
+      id: json['id'] != null
+          ? (json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0)
+          : 0,
       name: json['name'] ?? '',
-      price: json['price'] is double
-          ? json['price']
-          : double.tryParse(json['price'].toString()) ?? 0,
+
+      price: json['price'] != null
+          ? double.tryParse(json['price'].toString()) ?? 0.0
+          : 0.0,
       modules: (json['modules'] as List<dynamic>?)
           ?.map((m) => Module.fromJson(m))
           .toList() ??

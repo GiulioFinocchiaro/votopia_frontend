@@ -19,19 +19,18 @@ class Role {
     required List<Permission> permissions,
     DateTime? created_at,
   }) : _id = id,
-       _organization = organization,
-       _list = list,
-       _name = name,
-      _permissions = permissions,
-       _created_at = created_at;
+        _organization = organization,
+        _list = list,
+        _name = name,
+        _permissions = permissions,
+        _created_at = created_at;
 
   factory Role.fromJson(Map<String, dynamic> json) {
-    print("thisRole");
     return Role(
-      id: json['id'] is int ? json['id'] : int.tryParse(json['id']) ?? 0,
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
       organization: json['organization'] != null
           ? Organization.fromJson(json['organization'])
-          : Organization.empty(),
+          : null,
       list: json['list'] != null
           ? ListSchool.fromJson(json['list'])
           : ListSchool.empty(),
@@ -40,19 +39,28 @@ class Role {
           ?.map((p) => Permission.fromJson(p))
           .toList() ??
           [],
-      created_at: json['created_at'] ?? '',
+      created_at: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString())
+          : null,
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'organization': _organization?.toJson(),
+      'list': _list.toJson(),
+      'name': _name,
+      'permissions': _permissions.map((p) => p.toJson()).toList(),
+      'created_at': _created_at?.toIso8601String(),
+    };
+  }
+
+  // Getters
   DateTime? get created_at => _created_at;
-
   List<Permission> get permissions => _permissions;
-
   String get name => _name;
-
   ListSchool get list => _list;
-
   Organization? get organization => _organization;
-
   int get id => _id;
 }

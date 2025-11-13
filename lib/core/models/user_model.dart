@@ -23,7 +23,6 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    print("this");
     return User(
       id: json['id'] is int
           ? json['id']
@@ -31,26 +30,38 @@ class User {
       email: json['email'] ?? '',
       name: json['name'] ?? '',
       organization: json['organization'] != null
-        ? Organization.fromJson(json['organization'])
-        : Organization.empty(),
+          ? Organization.fromJson(json['organization'])
+          : Organization.empty(),
       roles: (json['roles'] as List<dynamic>?)
-              ?.map((r) => Role.fromJson(r))
-              .toList() ??
+          ?.map((r) => Role.fromJson(r))
+          .toList() ??
           [],
       lists: (json['lists'] as List<dynamic>?)
-              ?.map((m) => ListSchool.fromJson(m))
-              .toList() ??
+          ?.map((m) => ListSchool.fromJson(m))
+          .toList() ??
           [],
       createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'])
+          ? DateTime.tryParse(json['created_at'].toString())
           : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'organization': organization.toJson(),
+      'roles': roles.map((r) => r.toJson()).toList(),
+      'lists': lists.map((l) => l.toJson()).toList(),
+      'created_at': createdAt?.toIso8601String(),
+    };
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is User && runtimeType == other.runtimeType && id == other.id;
+          other is User && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

@@ -8,18 +8,26 @@ class Permission {
     required String name,
     required String description
   }) : _id = id,
-    _name = name,
-    _description = description;
+        _name = name,
+        _description = description;
 
   factory Permission.fromJson(Map<String, dynamic> json){
     return Permission(
-        id: json['id'] is int
+      id: json['id'] is int
           ? json['id']
           : int.tryParse(json['id'].toString())
           ?? 0,
-        name: json['name'] ?? '',
-        description: json['description'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'name': _name,
+      'description': _description,
+    };
   }
 
   factory Permission.empty(){
@@ -29,6 +37,11 @@ class Permission {
         description: ''
     );
   }
+
+  // Getters
+  int get id => _id;
+  String get name => _name;
+  String get description => _description;
 
   @override
   String toString() {

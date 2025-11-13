@@ -6,7 +6,7 @@ class Organization {
   final String _name;
   final Plan _plan;
   final bool _status;
-  final int _max_lists;
+  final int? _max_lists;
   final DateTime? _created_at;
 
   Organization({
@@ -15,7 +15,7 @@ class Organization {
     required String name,
     required Plan plan,
     required bool status,
-    required int max_lists,
+    int? max_lists,
     DateTime? created_at,
   })  : _id = id,
         _code = code,
@@ -68,7 +68,7 @@ class Organization {
   String get name => _name;
   String get code => _code;
   int get id => _id;
-  int get max_lists => _max_lists;
+  int? get max_lists => _max_lists;
 
   @override
   bool operator ==(Object other) =>

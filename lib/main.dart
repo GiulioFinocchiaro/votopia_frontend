@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:votopia/core/providers/user_provider.dart';
 import 'package:votopia/core/ui/themes/app_theme.dart';
 import 'package:votopia/core/views/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ class Votopia extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

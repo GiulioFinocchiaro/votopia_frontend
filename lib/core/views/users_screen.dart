@@ -33,7 +33,9 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUsers();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUsers(); // qui carichi gli utenti nel tuo _users
+    });
   }
 
   Future<void> _loadUsers() async {
@@ -41,18 +43,19 @@ class _UsersScreenState extends State<UsersScreen> {
 
     try {
       final response = await userProvider.getUsersMyOrganization();
-
-      if (response['status'] == true && response['data'] != null) {
+      if (response['status'] == true) {
         setState(() {
-          _users = List<Map<String, dynamic>>.from(
-            userProvider.usersMyOrganization.map((u) => {
-              'name': u.name,
-              'email': u.email,
-              'roles': u.roles.map((r) => r.name).join(', '),
-              'lists': u.lists.map((l) => l.name).join(', '),
-              'initials': _getInitials(u.name),
-            }),
-          );
+          _users = userProvider.usersMyOrganization.map((u) => {
+            'name': u.name,
+            'email': u.email,
+            'roles': u.roles != null && u.roles.isNotEmpty
+                ? u.roles.map((r) => r.name).join(', ')
+                : 'Nessun ruolo',
+            'lists': u.lists != null && u.lists.isNotEmpty
+                ? u.lists.map((l) => l.name).join(', ')
+                : 'Nessuna lista',
+            'initials': _getInitials(u.name),
+          }).toList();
         });
       } else {
         debugPrint('Errore caricamento utenti: ${response['message']}');

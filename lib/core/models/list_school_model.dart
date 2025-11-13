@@ -25,15 +25,15 @@ class ListSchool {
     required Organization organization,
     DateTime? created_at,
   }) :
-      _id = id,
-      _name = name,
-      _description = description,
-      _slogan = slogan,
-      _color_primary = color_primary,
-      _color_secondary = color_secondary,
-      _logo_url = logo_url,
-      _organization = organization,
-      _created_at = created_at;
+        _id = id,
+        _name = name,
+        _description = description,
+        _slogan = slogan,
+        _color_primary = color_primary,
+        _color_secondary = color_secondary,
+        _logo_url = logo_url,
+        _organization = organization,
+        _created_at = created_at;
 
   factory ListSchool.fromJson(Map<String, dynamic> json){
     return ListSchool(
@@ -43,29 +43,48 @@ class ListSchool {
             ?? 0,
         name: json['name'] ?? '',
         description: json['description'] ?? '',
-        slogan: json['slogan'] ?? null,
-        color_primary: Utils.colorFromHex(json['color_primary']) ?? null,
-        color_secondary: Utils.colorFromHex(json['color_secondary']) ?? null,
+        slogan: json['slogan'],
+        color_primary: json['color_primary'] != null ? Utils.colorFromHex(json['color_primary']) : null,
+        color_secondary: json['color_secondary'] != null ? Utils.colorFromHex(json['color_secondary']) : null,
         logo_url: json['logo_url'] ?? null,
-        organization: Organization.fromJson(json['organization'] ?? Organization.empty()),
-        created_at: json['created_at'] ?? null
+        organization: json['organization'] != null
+            ? Organization.fromJson(json['organization'])
+            : Organization.empty(),
+        created_at: json['created_at'] != null
+            ? DateTime.tryParse(json['created_at'].toString())
+            : null
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'name': _name,
+      'description': _description,
+      'slogan': _slogan,
+      'color_primary': _color_primary != null ? '#${_color_primary!.value.toRadixString(16).padLeft(8, '0')}' : null,
+      'color_secondary': _color_secondary != null ? '#${_color_secondary!.value.toRadixString(16).padLeft(8, '0')}' : null,
+      'logo_url': _logo_url,
+      'organization': _organization.toJson(),
+      'created_at': _created_at?.toIso8601String(),
+    };
   }
 
   factory ListSchool.empty(){
     return ListSchool(
-      id: 0,
-      name: '',
-      description: '',
-      slogan: null,
-      color_primary: null,
-      color_secondary: null,
-      logo_url: null,
-      organization: Organization.empty(),
-      created_at: null
+        id: 0,
+        name: '',
+        description: '',
+        slogan: null,
+        color_primary: null,
+        color_secondary: null,
+        logo_url: null,
+        organization: Organization.empty(),
+        created_at: null
     );
   }
 
+  // Getters
   DateTime? get created_at => _created_at;
 
   Organization get organization => _organization;

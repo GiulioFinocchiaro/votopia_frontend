@@ -214,8 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => DashboardScreen(
-                                        organizationName: authProvider.organizationLogged?.name ?? "Organizzazione",
+                                      builder: (context) => const DashboardScreen(
+                                        organizationName: "Closer Acireale",
                                       ),
                                     ),
                                   );
